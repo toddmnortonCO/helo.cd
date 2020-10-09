@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from 'axios';
 import { connect } from 'react-redux';
+import { getUser } from "../../Redux/reducer";
 
 class Auth extends Component {
   constructor(props) {
@@ -8,6 +9,7 @@ class Auth extends Component {
     this.state = {
       username: "",
       password: "",
+      verPassword: ""
     };
   }
 
@@ -15,26 +17,20 @@ class Auth extends Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
-  handleRegister = () => {
-    const { username, password } = this.state;
-    if (password && password === password) {
+  register = (e) => {    
       axios
-        .post("api/register", { username, password })
+        .post("/api/register", { username: this.state.username, password: this.state.password })
         .then((res) => {
           this.props.getUser(res.data);
           this.props.history.push("/dash");
         })
         .catch((err) => console.log(err));
-    } else {
-      alert("Passwords don't match");
-    }
-  };
+    } 
   
-  handleLogin = () => {
-    const { username, password } = this.state;
-
+  
+  login = (e) => {
     axios
-      .post("api/login", { username, password })
+      .post("/api/login", {username: this.state.username, password: this.state.password})
       .then((res) => {
         this.props.getUser(res.data);
         this.props.history.push("/dash");
@@ -46,13 +42,14 @@ class Auth extends Component {
     return (
       <div>
         <h1>Helo</h1>
-        <input onChange={(e) => this.handleInput(e)} placeholder='Username'></input>
-        <input onChange={(e) => this.handleInput(e)} placeholder='Password'></input>
-        <button onClick={this.handleLogin}>Login</button>
-        <button onClick={this.handleRegister}>Register</button>
+        <input name='username' onChange={(e) => this.handleInput(e)} placeholder='Username'></input>
+        <input name='password' onChange={(e) => this.handleInput(e)} placeholder='Password'></input>
+        <button onClick={this.login}>Login</button>
+        <button onClick={this.register}>Register</button>
       </div>
     );
   }
 }
+
 
 export default connect(null, { getUser })(Auth);

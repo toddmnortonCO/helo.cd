@@ -5,7 +5,7 @@ module.exports = {
         const { username, password } = req.body,
         db = req.app.get("db");
         
-        const foundUser = await db.users.check_user({ username });
+        const foundUser = await db.check_user({ username });
         if (foundUser[0]) {
             return res.status(400).send('Username already in use');
         }
@@ -21,7 +21,7 @@ module.exports = {
         const { username, password } = req.body,
             db = req.app.get("db");
         
-        const foundUser = await db.users.check_user({ username });
+        const foundUser = await db.check_user({ username });
         if (!foundUser[0]) {
             return res.status(400).send('Username not found.')
         }
@@ -39,5 +39,34 @@ module.exports = {
     logout: async (req, res) => {
         req.session.destroy();
         res.sendStatus(200);
-    }
+    },
+
+    createPost: (req, res) => {
+        const { id } = req.body,
+          db = req.app.get("db");
+
+        db.post
+          .create_post(id, postImage)
+          .then(() => res.sendStatus(200))
+          .catch((err) => res.status(500).send(err));
+    },
+
+    getUserPosts: (req, res) => {
+        const { id } = req.params,
+          db = req.app.get("db");
+
+        db.post
+          .get_user_posts(id)
+          .then((posts) => res.status(200).send(posts))
+          .catch((err) => res.status(500).send(err));
+    },
+
+    getpost: (req, res) => {
+        const { id } = req.params;
+        db = req.app.get('db');
+
+        db.get
+  }
+
+
 }
